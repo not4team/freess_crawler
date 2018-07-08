@@ -6,6 +6,7 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from scrapy.http import HtmlResponse
 
 
 class FreessCrawlerSpiderMiddleware(object):
@@ -78,6 +79,18 @@ class FreessCrawlerDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
+        if spider.name == 'freess':
+            try:
+                # request.meta['proxy'] = "socks5://127.0.0.1:1080"
+                spider.browser.get(request.url)
+            except:
+                return None
+            else:
+                return HtmlResponse(
+                    url=spider.browser.current_url,
+                    body=spider.browser.page_source,
+                    encoding="utf-8",
+                    request=request)
         return None
 
     def process_response(self, request, response, spider):

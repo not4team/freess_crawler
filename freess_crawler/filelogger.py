@@ -4,15 +4,16 @@ import os
 
 
 class Logger:
-    def __init__(self, Clevel=logging.DEBUG):
-        self.logger = logging.getLogger("spider")
-        self.logger.setLevel(logging.DEBUG)
-        # fmt = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s',
-        #                         '%Y-%m-%d %H:%M:%S')
-        # ch = logging.StreamHandler()
-        # ch.setLevel(Clevel)
-        # ch.setFormatter(fmt)
-        # self.logger.addHandler(ch)
+    def __init__(self, path, Flevel=logging.ERROR):
+        self.logger = logging.getLogger(path)
+        self.logger.setLevel(logging.ERROR)
+        fmt = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s',
+                                '%Y-%m-%d %H:%M:%S')
+        # 设置文件日志
+        fh = logging.FileHandler(path)
+        fh.setFormatter(fmt)
+        fh.setLevel(Flevel)
+        self.logger.addHandler(fh)
 
     def debug(self, message):
         self.logger.debug(message)
@@ -31,7 +32,7 @@ class Logger:
 
 
 if __name__ == '__main__':
-    logyyx = Logger(logging.DEBUG)
+    logyyx = Logger('spider.log', logging.ERROR)
     logyyx.debug('一个debug信息')
     logyyx.info('一个info信息')
     logyyx.war('一个warning信息')
