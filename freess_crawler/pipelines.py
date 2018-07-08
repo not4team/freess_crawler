@@ -19,7 +19,3 @@ class FreessCrawlerPipeline(object):
         msgpacktools.pack_profiles(item)
         msgpacktools.unpack_profiles()
         return item
-
-    def close_spider(self, spider):
-        spider.browser.quit()
-        mLogger.debug("spider closed")

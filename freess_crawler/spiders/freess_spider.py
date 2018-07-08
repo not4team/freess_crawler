@@ -4,6 +4,8 @@ from selenium import webdriver
 import sys
 sys.path.append("..")
 from freess_crawler.items import Profile, Package
+from scrapy.xlib.pydispatch import dispatcher
+from scrapy import signals
 
 
 class FreessSpider(scrapy.Spider):
@@ -18,6 +20,10 @@ class FreessSpider(scrapy.Spider):
         fireFoxOptions = webdriver.FirefoxOptions()
         fireFoxOptions.set_headless()
         self.browser = webdriver.Firefox(firefox_options=fireFoxOptions)
+        dispatcher.connect(self.spider_closed, signals.spider_closed)
+
+    def spider_closed(self, spider):
+        self.browser.quit()
 
     def start_requests(self):
         urls = [
