@@ -23,6 +23,7 @@ func Marshal(p *models.Package) error {
 	return nil
 }
 
+//export InsertProfiles
 func InsertProfiles(j string) {
 	p := new(models.Package)
 	err := json.Unmarshal([]byte(j), p)
