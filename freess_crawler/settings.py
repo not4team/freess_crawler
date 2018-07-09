@@ -13,7 +13,7 @@ BOT_NAME = 'freess_crawler'
 
 SPIDER_MODULES = ['freess_crawler.spiders']
 NEWSPIDER_MODULE = 'freess_crawler.spiders'
-
+DUPEFILTER_DEBUG = True
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0'

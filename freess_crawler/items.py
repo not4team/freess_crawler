@@ -39,4 +39,4 @@ class Profile(scrapy.Item):
 
 
 class Package(scrapy.Item):
-    Profiles = []
+    Profiles = scrapy.Field()

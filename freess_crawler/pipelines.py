@@ -15,7 +15,6 @@ mFileLogger = filelogger.Logger("fress_spider.log", logging.ERROR)
 
 class FreessCrawlerPipeline(object):
     def process_item(self, item, spider):
-        mLogger.debug("pipeline:" + item)
         msgpacktools.pack_profiles(item)
         msgpacktools.unpack_profiles()
         return item

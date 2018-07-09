@@ -1,14 +1,29 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from spiders import freess_spider
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
+from items import Package, Profile
 import settings as my_settings
 import msgpacktools
 if __name__ == '__main__':
-    freessSpider = freess_spider.FreessSpider()
-    crawler_settings = Settings()
-    crawler_settings.setmodule(my_settings)
-    process = CrawlerProcess(settings=crawler_settings)
-    process.crawl(freessSpider)
-    process.start()
+    # freessSpider = freess_spider.FreessSpider(isNeedFirefox = False)
+    # crawler_settings = Settings()
+    # crawler_settings.setmodule(my_settings)
+    # process = CrawlerProcess(settings=crawler_settings)
+    # process.crawl(freessSpider)
+    # process.start()
+    msgpacktools.unpack_profiles()
+    package = Package()
+    profiles = []
+    profile = Profile()
+    profile["Name"] = "测试"
+    profile["Country"] = "US"
+    profile["Host"] = "127.0.0.1"
+    profile["RemotePort"] = 1080
+    profile["Password"] = "password"
+    profile["Method"] = "aes-256"
+    profiles.append(dict(profile))
+    package["Profiles"] = profiles
+    msgpacktools.pack_profiles(package)
+    msgpacktools.unpack_profiles()
