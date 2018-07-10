@@ -67,6 +67,8 @@ extern "C" {
 
 extern void InsertProfiles(GoString p0);
 
+extern char* AesEncrypt(GoString p0);
+
 #ifdef __cplusplus
 }
 #endif

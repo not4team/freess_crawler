@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import scrapy
 import time
@@ -12,6 +13,10 @@ mFileLogger = filelogger.Logger("fress_spider.log", logging.ERROR)
 from freess_crawler.items import Profile, Package
 from scrapy import signals
 from selenium.webdriver.common.proxy import Proxy, ProxyType
+import base64
+from urllib import parse
+from freess_crawler import msgpacktools
+import re
 
 
 class FreessSpider(scrapy.Spider):
@@ -60,26 +65,55 @@ class FreessSpider(scrapy.Spider):
             now = time.strftime("%b-%d-%Y_%H:%M:%S", time.localtime())
             yield response.follow("https://free-ss.site/?time="+now, self.parse)
             return
-        mLogger.debug(body)
-        tbody = response.css('tbody')[3]
-        mFileLogger.error(tbody)
+
+        scripts = response.css('head').extract_first()
+        # mFileLogger.error(scripts)
+        pattern = re.compile(r'(?<=var table = ).+?(?=DataTable)', re.I)
+        matchObj = re.search(pattern, scripts)
+        _id = matchObj.group(0)
+        thead = response.css('table' + _id[3:len(_id)-3] + ' thead')
+        thead_dict = {}
+        for i, th in enumerate(thead.css('tr th')):
+            thead_dict[th.css('::text').extract_first()] = i
+        print(thead_dict)
+        tbody = response.css('table#tb8e9a tbody')
         trs = tbody.css('tr')
         package = Package()
         profiles = []
         for tr in trs:
             tds = tr.css('td::text')
-            host = tds.extract()[1]
-            port = tds.extract()[2]
-            password = tds.extract()[3]
-            method = tds.extract()[4]
+            host = tds.extract()[thead_dict["Address"]]
+            port = tds.extract()[thead_dict["Port"]]
+            password = tds.extract()[thead_dict["Password"]]
+            method = tds.extract()[thead_dict["Method"]]
             country = tds.extract()[6]
             profile = Profile()
-            profile["Name"] = self.country_dict[country]
+            country_count = self.count_country(country, profiles)
+            name = self.country_dict[country]
+            if country_count > 0:
+                name += str(country_count)
+            profile["Name"] = name
             profile["Country"] = country
             profile["Host"] = host
-            profile["RemotePort"] = port
+            profile["RemotePort"] = int(port)
             profile["Password"] = password
             profile["Method"] = method
-            profiles.append(profile)
+            profile["OriginUrl"] = msgpacktools.aesencrypt(
+                self.create_originurl(profile))
+            profile["Password"] = msgpacktools.aesencrypt(password)
+            profiles.append(dict(profile))
         package["Profiles"] = profiles
         yield package
+
+    def create_originurl(self, profile):
+        host = profile["Method"] + ":" + profile["Password"] + \
+            "@" + profile["Host"] + ":" + str(profile["RemotePort"])
+        ss = "ss://" + str(base64.b64encode(host.encode("utf-8")), 'utf-8')
+        return parse.quote(ss)
+
+    def count_country(self, country, profiles):
+        count = 0
+        for profile in profiles:
+            if country in profile["Country"]:
+                count += 1
+        return count

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import msgpack
 import json
@@ -11,6 +11,16 @@ class GoString(Structure):
     _fields_ = [("p", c_char_p), ("n", c_longlong)]
 
 
+def aesencrypt(content):
+    lib = CDLL('./msgpacktool.so')
+    lib.AesEncrypt.restype = c_char_p
+    lib.AesEncrypt.argtypes = [GoString]
+    buf = bytes(content, encoding='utf8')
+    msg = GoString(buf, len(buf))
+    result = lib.AesEncrypt(msg)
+    return str(result, encoding = "utf-8")
+
+
 def unpack_profiles():
     with open(env_dist.get('GOBIN') + "/ss-server/datas", "rb") as f:
         buf = f.read()
@@ -20,8 +30,8 @@ def unpack_profiles():
 
 def pack_profiles(package):
     jsonStr = json.dumps(dict(package), ensure_ascii=False)
-    print(jsonStr)
     lib = CDLL('./msgpacktool.so')
     lib.InsertProfiles.argtypes = [GoString]
-    msg = GoString(jsonStr, len(jsonStr))
+    buf = bytes(jsonStr, encoding='utf8')
+    msg = GoString(buf, len(buf))
     lib.InsertProfiles(msg)
