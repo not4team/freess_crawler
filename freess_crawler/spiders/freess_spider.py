@@ -39,7 +39,7 @@ class FreessSpider(scrapy.Spider):
             fireFoxOptions = webdriver.FirefoxOptions()
             fireFoxOptions.set_headless()
             self.browser = webdriver.Firefox(
-                #firefox_profile=profile, 
+                # firefox_profile=profile, 
                 options=fireFoxOptions)
 
     @classmethod
@@ -77,7 +77,7 @@ class FreessSpider(scrapy.Spider):
         for i, th in enumerate(thead.css('tr th')):
             thead_dict[th.css('::text').extract_first()] = i
         print(thead_dict)
-        tbody = response.css('table#tb8e9a tbody')
+        tbody = response.css('table' + _id[3:len(_id)-3] + ' tbody')
         trs = tbody.css('tr')
         package = Package()
         profiles = []
