@@ -6,11 +6,6 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import msgpacktools
-import logging
-import logger
-mLogger = logger.Logger(logging.DEBUG)
-import filelogger
-mFileLogger = filelogger.Logger("fress_spider.log", logging.ERROR)
 
 
 class FreessCrawlerPipeline(object):

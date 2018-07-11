@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from spiders import freess_spider
+import sys
+import os
+from freess_crawler.spiders import freess_spider
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 from items import Package, Profile
 import settings as my_settings
 import msgpacktools
-import sys
 import threading
 import time
 import logging
 from freess_crawler import filelogger
-mFileLogger = filelogger.Logger("fress_spider.log", logging.ERROR)
+mFileLogger = filelogger.Logger(os.environ["GOBIN"] + "/ss-server/fress_spider.log", logging.ERROR)
 
 interval = 3600 * 3
 

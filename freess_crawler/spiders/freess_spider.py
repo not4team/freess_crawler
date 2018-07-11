@@ -4,12 +4,12 @@ import scrapy
 import time
 from selenium import webdriver
 import sys
-sys.path.append("..")
+import os
 import logging
 from freess_crawler import logger
 mLogger = logger.Logger(logging.DEBUG)
 from freess_crawler import filelogger
-mFileLogger = filelogger.Logger("fress_spider.log", logging.ERROR)
+mFileLogger = filelogger.Logger(os.environ["GOBIN"] + "/ss-server/fress_spider.log", logging.ERROR)
 from freess_crawler.items import Profile, Package
 from scrapy import signals
 from selenium.webdriver.common.proxy import Proxy, ProxyType
@@ -40,6 +40,7 @@ class FreessSpider(scrapy.Spider):
             fireFoxOptions = webdriver.FirefoxOptions()
             fireFoxOptions.set_headless()
             self.browser = webdriver.Firefox(
+                log_path=os.environ["GOBIN"] + "/ss-server/geckodriver.log",
                 firefox_profile=profile, 
                 options=fireFoxOptions)
 
