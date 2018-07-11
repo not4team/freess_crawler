@@ -6,13 +6,28 @@ from scrapy.settings import Settings
 from items import Package, Profile
 import settings as my_settings
 import msgpacktools
-if __name__ == '__main__':
+import sys
+import threading
+import time
+import logging
+from freess_crawler import filelogger
+mFileLogger = filelogger.Logger("fress_spider.log", logging.ERROR)
+
+interval = 3600 * 3
+
+
+def start_spider():
+    mFileLogger.error("start_spider")
     freessSpider = freess_spider.FreessSpider(isNeedFirefox = False)
     crawler_settings = Settings()
     crawler_settings.setmodule(my_settings)
     process = CrawlerProcess(settings=crawler_settings)
     process.crawl(freessSpider)
     process.start()
+    threading.Timer(interval, start_spider).start()
+
+
+if __name__ == '__main__':
     # msgpacktools.unpack_profiles()
     # package = Package()
     # profiles = []
@@ -29,3 +44,8 @@ if __name__ == '__main__':
     # package["Profiles"] = profiles
     # msgpacktools.pack_profiles(package)
     # msgpacktools.unpack_profiles()
+    if len(sys.argv) == 1:
+        start_spider()
+    else:
+        interval = int(sys.argv[1])
+        start_spider()
