@@ -37,9 +37,10 @@ class FreessSpider(scrapy.Spider):
             profile.set_preference('network.proxy.ssl_port', 8118)
             profile.update_preferences()
             fireFoxOptions = webdriver.FirefoxOptions()
-            # fireFoxOptions.set_headless()
+            fireFoxOptions.set_headless()
             self.browser = webdriver.Firefox(
-                firefox_profile=profile, options=fireFoxOptions)
+                #firefox_profile=profile, 
+                options=fireFoxOptions)
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
