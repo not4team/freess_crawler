@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import scrapy
 import time
@@ -30,16 +30,17 @@ class FreessSpider(scrapy.Spider):
     def __init__(self, isNeedFirefox=True):
         if isNeedFirefox:
             profile = webdriver.FirefoxProfile()
-            profile.set_preference('network.proxy.type', 1)
-            profile.set_preference('network.proxy.http', '127.0.0.1')
-            profile.set_preference('network.proxy.http_port', 8118)
-            profile.set_preference('network.proxy.ssl', '127.0.0.1')
-            profile.set_preference('network.proxy.ssl_port', 8118)
+            # profile.set_preference('network.proxy.type', 1)
+            # profile.set_preference('network.proxy.http', '127.0.0.1')
+            # profile.set_preference('network.proxy.http_port', 8118)
+            # profile.set_preference('network.proxy.ssl', '127.0.0.1')
+            # profile.set_preference('network.proxy.ssl_port', 8118)
+            profile.set_preference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0")
             profile.update_preferences()
             fireFoxOptions = webdriver.FirefoxOptions()
             fireFoxOptions.set_headless()
             self.browser = webdriver.Firefox(
-                # firefox_profile=profile, 
+                firefox_profile=profile, 
                 options=fireFoxOptions)
 
     @classmethod
@@ -72,6 +73,7 @@ class FreessSpider(scrapy.Spider):
         pattern = re.compile(r'(?<=var table = ).+?(?=DataTable)', re.I)
         matchObj = re.search(pattern, scripts)
         _id = matchObj.group(0)
+        print("=======" + _id)
         thead = response.css('table' + _id[3:len(_id)-3] + ' thead')
         thead_dict = {}
         for i, th in enumerate(thead.css('tr th')):
