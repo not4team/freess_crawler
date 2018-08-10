@@ -4,6 +4,7 @@ import scrapy
 import time
 from selenium import webdriver
 import sys
+sys.path.append("..")
 import os
 import logging
 from freess_crawler import logger
@@ -38,7 +39,7 @@ class FreessSpider(scrapy.Spider):
             profile.set_preference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0")
             profile.update_preferences()
             fireFoxOptions = webdriver.FirefoxOptions()
-            fireFoxOptions.set_headless()
+            fireFoxOptions.set_headless(True)
             self.browser = webdriver.Firefox(
                 log_path=os.environ["GOBIN"] + "/ss-server/geckodriver.log",
                 firefox_profile=profile, 

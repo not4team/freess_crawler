@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-from freess_crawler.spiders import freess_spider
+from spiders import freess_spider
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 from items import Package, Profile
@@ -25,7 +25,7 @@ def start_spider():
     process = CrawlerProcess(settings=crawler_settings)
     process.crawl(freessSpider)
     process.start()
-    threading.Timer(interval, start_spider).start()
+    # threading.Timer(interval, start_spider).start()
 
 
 if __name__ == '__main__':

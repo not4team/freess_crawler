@@ -12,7 +12,7 @@ class GoString(Structure):
 
 
 def aesencrypt(content):
-    lib = CDLL('/usr/lib/python3.6/site-packages/freess_crawler/msgpacktool.so')
+    lib = CDLL('./msgpacktool.so')
     lib.AesEncrypt.restype = c_char_p
     lib.AesEncrypt.argtypes = [GoString]
     buf = bytes(content, encoding='utf8')
@@ -30,7 +30,7 @@ def unpack_profiles():
 
 def pack_profiles(package):
     jsonStr = json.dumps(dict(package), ensure_ascii=False)
-    lib = CDLL('/usr/lib/python3.6/site-packages/freess_crawler/msgpacktool.so')
+    lib = CDLL('./msgpacktool.so')
     lib.InsertProfiles.argtypes = [GoString]
     buf = bytes(jsonStr, encoding='utf8')
     msg = GoString(buf, len(buf))
