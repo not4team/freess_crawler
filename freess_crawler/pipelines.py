@@ -10,6 +10,6 @@ import msgpacktools
 
 class FreessCrawlerPipeline(object):
     def process_item(self, item, spider):
-        if len(item["Profiles"]) > 0：
+        if len(item["Profiles"]) > 0:
             msgpacktools.pack_profiles(item)
         return item
