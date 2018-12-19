@@ -27,18 +27,18 @@ class FreessSpider(scrapy.Spider):
     def __init__(self, isNeedFirefox=True):
         if isNeedFirefox:
             profile = webdriver.FirefoxProfile()
-            profile.set_preference('network.proxy.type', 1)
-            profile.set_preference('network.proxy.http', '127.0.0.1')
-            profile.set_preference('network.proxy.http_port', 8118)
-            profile.set_preference('network.proxy.ssl', '127.0.0.1')
-            profile.set_preference('network.proxy.ssl_port', 8118)
+            # profile.set_preference('network.proxy.type', 1)
+            # profile.set_preference('network.proxy.http', '127.0.0.1')
+            # profile.set_preference('network.proxy.http_port', 8118)
+            # profile.set_preference('network.proxy.ssl', '127.0.0.1')
+            # profile.set_preference('network.proxy.ssl_port', 8118)
             # profile.set_preference('network.proxy.socks', '127.0.0.1')
             # profile.set_preference('network.proxy.socks_port', 1080)
             profile.set_preference(
                 "general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0")
             profile.update_preferences()
             fireFoxOptions = webdriver.FirefoxOptions()
-            fireFoxOptions.set_headless(False)
+            fireFoxOptions.set_headless(True)
             self.browser = webdriver.Firefox(
                 log_path=os.environ["GOBIN"] + "/ss-server/geckodriver.log",
                 firefox_profile=profile,
