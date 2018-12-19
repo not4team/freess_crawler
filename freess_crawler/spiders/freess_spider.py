@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append("..")
+import re
+from freess_crawler import msgpacktools
+from urllib import parse
+import base64
+from selenium.webdriver.common.proxy import Proxy, ProxyType
+from scrapy import signals
+from freess_crawler.items import Profile, Package
+import logging
+import os
 import scrapy
 import time
 from selenium import webdriver
-import sys
-sys.path.append("..")
-import os
-import logging
-from freess_crawler import logger
-mLogger = logger.Logger(logging.DEBUG)
-from freess_crawler import filelogger
-mFileLogger = filelogger.Logger(os.environ["GOBIN"] + "/ss-server/fress_spider.log", logging.ERROR)
-from freess_crawler.items import Profile, Package
-from scrapy import signals
-from selenium.webdriver.common.proxy import Proxy, ProxyType
-import base64
-from urllib import parse
-from freess_crawler import msgpacktools
-import re
 
 
 class FreessSpider(scrapy.Spider):
@@ -31,19 +27,24 @@ class FreessSpider(scrapy.Spider):
     def __init__(self, isNeedFirefox=True):
         if isNeedFirefox:
             profile = webdriver.FirefoxProfile()
-            # profile.set_preference('network.proxy.type', 1)
-            # profile.set_preference('network.proxy.http', '127.0.0.1')
-            # profile.set_preference('network.proxy.http_port', 8118)
-            # profile.set_preference('network.proxy.ssl', '127.0.0.1')
-            # profile.set_preference('network.proxy.ssl_port', 8118)
-            profile.set_preference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0")
+            profile.set_preference('network.proxy.type', 1)
+            profile.set_preference('network.proxy.http', '127.0.0.1')
+            profile.set_preference('network.proxy.http_port', 8118)
+            profile.set_preference('network.proxy.ssl', '127.0.0.1')
+            profile.set_preference('network.proxy.ssl_port', 8118)
+            # profile.set_preference('network.proxy.socks', '127.0.0.1')
+            # profile.set_preference('network.proxy.socks_port', 1080)
+            profile.set_preference(
+                "general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0")
             profile.update_preferences()
             fireFoxOptions = webdriver.FirefoxOptions()
-            fireFoxOptions.set_headless(True)
+            fireFoxOptions.set_headless(False)
             self.browser = webdriver.Firefox(
                 log_path=os.environ["GOBIN"] + "/ss-server/geckodriver.log",
-                firefox_profile=profile, 
+                firefox_profile=profile,
                 options=fireFoxOptions)
+            # self.browser.set_page_load_timeout(10)
+            # self.browser.set_script_timeout(10)
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -53,6 +54,7 @@ class FreessSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self, spider):
+        logging.info("freess spider closed")
         self.browser.quit()
 
     def start_requests(self):
@@ -71,16 +73,15 @@ class FreessSpider(scrapy.Spider):
             return
 
         scripts = response.css('head').extract_first()
-        # mFileLogger.error(scripts)
         pattern = re.compile(r'(?<=var table = ).+?(?=DataTable)', re.I)
         matchObj = re.search(pattern, scripts)
         _id = matchObj.group(0)
-        print("=======" + _id)
+        logging.info("parse id is " + _id)
         thead = response.css('table' + _id[3:len(_id)-3] + ' thead')
         thead_dict = {}
         for i, th in enumerate(thead.css('tr th')):
             thead_dict[th.css('::text').extract_first()] = i
-        print(thead_dict)
+        logging.info(thead_dict)
         tbody = response.css('table' + _id[3:len(_id)-3] + ' tbody')
         trs = tbody.css('tr')
         package = Package()

@@ -5,8 +5,11 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import os
 from scrapy import signals
 from scrapy.http import HtmlResponse
+from scrapy.exceptions import CloseSpider
+import timeout_decorator
 
 
 class FreessCrawlerSpiderMiddleware(object):
@@ -82,16 +85,28 @@ class FreessCrawlerDownloaderMiddleware(object):
         if spider.name == 'freess':
             try:
                 # request.meta['proxy'] = "socks5://127.0.0.1:1080"
-                spider.browser.get(request.url)
-            except:
-                return None
-            else:
+                spider.logger.info("spider %s browser start fetch", spider.name)
+                # spider.browser.get(request.url)
+                self.browser_get(spider.browser, request.url)
+                spider.logger.info("spider %s browser get success", spider.name)
                 return HtmlResponse(
                     url=spider.browser.current_url,
                     body=spider.browser.page_source,
                     encoding="utf-8",
                     request=request)
+            except Exception as err:
+                spider.logger.info("spider %s browser get fail err %s", spider.name, err)
+                # spider.browser.quit()
+                os.system("pkill -9 firefox")
+                raise CloseSpider('spider fress browser get err')
+            finally:
+                spider.logger.info("spider %s browser finally", spider.name)
+                
         return None
+
+    @timeout_decorator.timeout(15, use_signals=False)
+    def browser_get(self, browser, url):
+        browser.get(url)
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
