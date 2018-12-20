@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import sys
-sys.path.append("..")
+import os
+sys.path.append(os.environ['FREESS_SPIDER_HOME'] + '/freess_crawler')
 import re
 from freess_crawler import msgpacktools
 from urllib import parse
@@ -10,7 +11,6 @@ from selenium.webdriver.common.proxy import Proxy, ProxyType
 from scrapy import signals
 from freess_crawler.items import Profile, Package
 import logging
-import os
 import scrapy
 import time
 from selenium import webdriver
