@@ -3,7 +3,7 @@
 import sys
 import os
 import logging
-sys.path.append('..')
+sys.path.append(os.environ["FREESS_SPIDER_HOME"])
 import re
 from freess_crawler import msgpacktools
 from urllib import parse
