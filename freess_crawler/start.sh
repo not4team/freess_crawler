@@ -2,4 +2,4 @@
 . /etc/profile
 . ~/.bash_profile
 
-/usr/bin/python3 /home/shixq/workspaces/python-projects/freess_crawler/freess_crawler/run.py
+/usr/bin/python3 /home/ssserver/freess_crawler/freess_crawler/run.py
