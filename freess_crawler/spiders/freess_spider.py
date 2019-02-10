@@ -90,8 +90,8 @@ class FreessSpider(scrapy.Spider):
             tds = tr.css('td::text')
             host = tds.extract()[thead_dict["Address"]]
             port = tds.extract()[thead_dict["Port"]]
-            password = tds.extract()[thead_dict["Password"]]
-            method = tds.extract()[thead_dict["Method"]]
+            password = tds.extract()[3]
+            method = tds.extract()[4]
             country = tds.extract()[6]
             profile = Profile()
             country_count = self.count_country(country, profiles)
