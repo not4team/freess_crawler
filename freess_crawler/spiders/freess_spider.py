@@ -100,7 +100,7 @@ class FreessSpider(scrapy.Spider):
                 else:
                     thead_dict["Password"] = 4
                     thead_dict["Method"] = 3
-                logging.info("Password index:" + thead_dict["Password"] + ",Method index:" + thead_dict["Method"])
+                logging.info("Password index:" + str(thead_dict["Password"]) + ",Method index:" + str(thead_dict["Method"]))
             password = tds.extract()[thead_dict["Password"]]
             method = tds.extract()[thead_dict["Method"]]
             country = tds.extract()[6]
