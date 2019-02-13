@@ -95,11 +95,11 @@ class FreessSpider(scrapy.Spider):
             if "Password" not in thead_dict:
                 temp = tds.extract()[3]
                 if temp in self.methods:
-                    thead_dict["Password"] = 3
-                    thead_dict["Method"] = 4
-                else:
                     thead_dict["Password"] = 4
                     thead_dict["Method"] = 3
+                else:
+                    thead_dict["Password"] = 3
+                    thead_dict["Method"] = 4
                 logging.info("Password index:" + str(thead_dict["Password"]) + ",Method index:" + str(thead_dict["Method"]))
             password = tds.extract()[thead_dict["Password"]]
             method = tds.extract()[thead_dict["Method"]]
