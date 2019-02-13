@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys
+import os
+import logging
+sys.path.append(os.environ["FREESS_SPIDER_HOME"])
 from selenium import webdriver
 import time
 import scrapy
@@ -10,11 +14,6 @@ import base64
 from urllib import parse
 from freess_crawler import msgpacktools
 import re
-import sys
-import os
-import logging
-sys.path.append(os.environ["FREESS_SPIDER_HOME"])
-
 
 class FreessSpider(scrapy.Spider):
     name = "freess"
