@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from selenium import webdriver
+import time
+import scrapy
+from freess_crawler.items import Profile, Package
+from scrapy import signals
+from selenium.webdriver.common.proxy import Proxy, ProxyType
+import base64
+from urllib import parse
+from freess_crawler import msgpacktools
+import re
 import sys
 import os
 import logging
 sys.path.append(os.environ["FREESS_SPIDER_HOME"])
-import re
-from freess_crawler import msgpacktools
-from urllib import parse
-import base64
-from selenium.webdriver.common.proxy import Proxy, ProxyType
-from scrapy import signals
-from freess_crawler.items import Profile, Package
-import scrapy
-import time
-from selenium import webdriver
 
 
 class FreessSpider(scrapy.Spider):
@@ -23,6 +23,9 @@ class FreessSpider(scrapy.Spider):
                     'JP': '日本', 'MM': '缅甸', 'MO': '澳门', 'MX': '墨西哥', 'MY': '马来西亚', 'NL': '荷兰', 'NO': '挪威', 'PH': '菲律宾', 'PK': '巴基斯坦', 'PL': '波兰', 'RU': '俄罗斯', 'SE': '瑞典',
                     'SG': '新加坡', 'TH': '泰国', 'US': '美国', 'VN': '越南', 'CN': '中国', 'GB': '英国', 'TW': '台湾', 'NZ': '新西兰', 'SA': '沙特阿拉伯', 'KP': '朝鲜', 'KR': '韩国', 'PT': '葡萄牙',
                     'MN': '蒙古', 'RO': '罗马尼亚', 'TR': '土耳其'}
+
+    methods = ["rc4-md5", "aes-128-cfb", "aes-192-cfb", "aes-256-cfb", "aes-128-ctr", "aes-192-ctr", "aes-256-ctr", "bf-cfb", "camellia-128-cfb", "camellia-192-cfb",
+               "camellia-256-cfb", "salsa20", "chacha20", "chacha20-ietf", "aes-128-gcm", "aes-192-gcm", "aes-256-gcm", "chacha20-ietf-poly1305", "xchacha20-ietf-poly1305"]
 
     def __init__(self, isNeedFirefox=True):
         if isNeedFirefox:
@@ -90,8 +93,16 @@ class FreessSpider(scrapy.Spider):
             tds = tr.css('td::text')
             host = tds.extract()[thead_dict["Address"]]
             port = tds.extract()[thead_dict["Port"]]
-            password = tds.extract()[3]
-            method = tds.extract()[4]
+            if "Password" not in thead_dict:
+                temp = tds.extract()[3]
+                if temp in self.methods:
+                    thead_dict["Password"] = 3
+                    thead_dict["Method"] = 4
+                else:
+                    thead_dict["Password"] = 4
+                    thead_dict["Method"] = 3
+            password = tds.extract()[thead_dict["Password"]]
+            method = tds.extract()[thead_dict["Method"]]
             country = tds.extract()[6]
             profile = Profile()
             country_count = self.count_country(country, profiles)
